@@ -21,10 +21,50 @@ IDtonames['762'] = 'Biotec'
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-global status_label
+def createGUI():
+    root = Tk()
+    root.title('IONBot')
+    root.geometry('210x180')
+    root.configure(background='white')
+
+    username = Entry(root, width=20)
+    userlabel = Label(root, text = 'Username:', background='white')
+    password = Entry(root, show="*", width=20)
+    passwordlabel = Label(root, text = 'Password:', background='white')
+    userlabel.place(x = 10, y = 10)
+    username.place(x = 70, y = 10)
+    passwordlabel.place(x = 10, y = 35)
+    password.place(x = 70, y = 35)
+    username.focus()
+
+    classlabel = Label(root, text='Activity:', background='white')
+    classlabel.place(x = 10, y = 60)
+    classCombo = Combobox(root)
+    classCombo['values'] = ('Volleyball', 'Weight Room', 'Library Study Hall', 'Biotech')
+    classCombo.place(x = 62, y = 60)
+
+    customClassLabel = Label(root, text='Custom:', background='white')
+    customClassLabel.place(x = 10, y=85)
+    customClassInfo = Entry(root, width=20)
+    customClassInfo.place(x=70, y = 85)
+
+    selected = IntVar()
+    rad1 = Radiobutton(root, text='A', value=1, variable=selected)
+    rad2 = Radiobutton(root, text='B', value=2, variable=selected)
+    rad1.place(x = 76, y = 110)
+    rad2.place(x = 116, y = 110)
+
+    doProcess = Button(root, text="Begin Searching", command=beginProcess)
+    doProcess.place(x = 65, y = 135)
+
+    status_label = Label(root, text = 'Not Searching', background='white')
+    status_label.place(x = 75, y = 160)
+
+    root.mainloop()
 
 def beginProcess():
     status_label.configure(text='Searching') # Not Working
+    root.update_idletasks()
     signup(username.get(), password.get(), classToID.get(classCombo.get()), selected.get(), customClassInfo.get())
 
 def getBlockText(driver, blockRequested):
@@ -86,13 +126,15 @@ def signup(username, password, activity, blockRequested, customID):
     blockWanted = getBlockText(driver, blockRequested)
     timesTried = 0
     while(activitySliver not in blockWanted.text):
-        driver.get('https://ion.tjhsst.edu/eighth/?activity=' + activity)
+        driver.get(driver.current_url + '/?activity=' + activity)
         try:
             signup_button = driver.find_element_by_id('signup-button')
             signup_button.click()
         except Exception:
             timesTried += 1
             status_label.configure(text='Times tried:' + str(timesTried))
+            root.update_idletasks()
+            print('bing bang boom here is your times tried:' + str(timesTried))
 
         blockWanted = getBlockText(driver, blockRequested)
         time.sleep(8)
@@ -101,43 +143,5 @@ def signup(username, password, activity, blockRequested, customID):
     driver.close()
 
 
-root = Tk()
-root.title('IONBot')
-root.geometry('210x180')
-root.configure(background='white')
 
-username = Entry(root, width=20)
-userlabel = Label(root, text = 'Username:', background='white')
-password = Entry(root, show="*", width=20)
-passwordlabel = Label(root, text = 'Password:', background='white')
-userlabel.place(x = 10, y = 10)
-username.place(x = 70, y = 10)
-passwordlabel.place(x = 10, y = 35)
-password.place(x = 70, y = 35)
-username.focus()
-
-classlabel = Label(root, text='Activity:', background='white')
-classlabel.place(x = 10, y = 60)
-classCombo = Combobox(root)
-classCombo['values'] = ('Volleyball', 'Weight Room', 'Library Study Hall', 'Biotech')
-classCombo.place(x = 62, y = 60)
-
-customClassLabel = Label(root, text='Custom:', background='white')
-customClassLabel.place(x = 10, y=85)
-customClassInfo = Entry(root, width=20)
-customClassInfo.place(x=70, y = 85)
-
-selected = IntVar()
-rad1 = Radiobutton(root, text='A', value=1, variable=selected)
-rad2 = Radiobutton(root, text='B', value=2, variable=selected)
-rad1.place(x = 76, y = 110)
-rad2.place(x = 116, y = 110)
-
-doProcess = Button(root, text="Begin Searching", command=beginProcess)
-doProcess.place(x = 65, y = 135)
-
-status_label = Label(root, text = 'Not Searching', background='white')
-status_label.place(x = 75, y = 160)
-
-root.mainloop()
 beginProcess()
