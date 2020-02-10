@@ -90,7 +90,7 @@ def signup(username, password, activity, blockRequested, customID):
     blockWanted = getBlockText(driver, blockRequested)
     timesTried = 0
     while(activitySliver not in blockWanted.text):
-        driver.get(driver.current_url + '/?activity=' + activity)
+        driver.get(driver.current_url + '?activity=' + activity)
         try:
             signup_button = driver.find_element_by_id('signup-button')
             signup_button.click()
@@ -101,7 +101,7 @@ def signup(username, password, activity, blockRequested, customID):
             print('bing bang boom here is your times tried:' + str(timesTried))
 
         blockWanted = getBlockText(driver, blockRequested)
-        time.sleep(8)
+        time.sleep(6)
 
     status_label.configure(text="Succesfully found spot.")
     driver.close()
