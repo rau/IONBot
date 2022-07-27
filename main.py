@@ -63,21 +63,17 @@ def signup(username, password, activity, blockRequested, customID):
         status_label.configure(text='Incorrect Login')
         return 'Terminated'  # Does nothing
 
-    # Gets Past 8th Period Page
     eighth = driver.find_element_by_xpath('/html/body/div[3]/ul/li[2]/a')
     eighth.click()
 
-    # Finds Current Day and Blocks Elements
     current_day = driver.find_element_by_class_name('current-day')
     blocks = current_day.find_elements_by_class_name('block')
 
-    # A or B block
     if(blockRequested == 1):
         blockElement = blocks[0]
     else:
         blockElement = blocks[1]
 
-    # Clicks on block link to actually get to that block's activities
     blockParent = blockElement.find_element_by_xpath('..')
     blockParent.click()
 
